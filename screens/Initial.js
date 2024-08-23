@@ -6,11 +6,11 @@ const Initial = ({ navigation }) => {
     useEffect(() => {
         const timer = setTimeout(() => {
             navigation.navigate('Home')
-        }, 1000)
+        }, 2000)
     }, [])
   return (
     <View style={styles.container}>
-      <FontAwesome6 name="cross" size={300} color="white" />
+      <FontAwesome6 name="cross" size={200} color="white" />
       <Text style={styles.text}>BIBLE  KJV</Text>
     </View>
   )

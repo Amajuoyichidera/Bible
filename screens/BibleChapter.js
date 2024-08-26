@@ -62,8 +62,8 @@ const styles = StyleSheet.create({
     },
     head: {
         backgroundColor: '#163764',
-        height: '13%',
-        paddingTop: 60,
+        height: '12%',
+        paddingTop: 40,
         display: 'flex',
         flexDirection: 'row',
         gap: 15,

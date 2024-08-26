@@ -21,6 +21,7 @@ export default function App() {
         <Stack.Screen name="Chapter" component={BibleChapter} options={{headerShown: false }} />
         <Stack.Screen name="Verses" component={Verses} options={{headerShown: false }} />
       </Stack.Navigator>
+      <StatusBar hidden={true} />
      </NavigationContainer>
     </Provider>
   );

@@ -1,11 +1,49 @@
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
-import React from 'react';
+import React, { useState} from 'react';
 import Feather from '@expo/vector-icons/Feather';
+import Entypo from '@expo/vector-icons/Entypo';
+import { Share } from 'react-native';
+import * as Speech from 'expo-speech';
+import Foundation from '@expo/vector-icons/Foundation';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 
 const Verses = ({ route, navigation }) => {
     const { chapter } = route.params;
     const verses = chapter ? chapter.verses : [];
+
+    const shareVerse = async () => {
+        try {
+            const myVerse = verses.map(verse => `${verse.name} - ${verse.text}`).join('\n \n');
+            await Share.share({
+                message: `check out this bible verses: \n\n${myVerse} `
+            });
+        } catch (error) {
+            console.error('Error sharing verse:', error.message);
+        }
+    };
+
+    const [isSpeaking, setIsSpeaking] = useState(false);
+
+    const goBack = () => {
+        Speech.stop();
+        navigation.goBack('Chapter');
+    }
+
+    const speak = () => {
+        if (isSpeaking) {
+            Speech.stop();
+            setIsSpeaking(false);
+        } else {
+            const myVerse = verses.map(verse => `${verse.name} - ${verse.text}`).join('\n\n');
+            Speech.speak(myVerse, {
+                onDone: () => setIsSpeaking(false),  // Reset state when speech is done
+                onStopped: () => setIsSpeaking(false),  // Reset state when speech is stopped
+            });
+            setIsSpeaking(true);
+        }
+    };
+    
 
     const renderItem = ({ item }) => (
         <View style={styles.itemCon}>
@@ -17,10 +55,21 @@ const Verses = ({ route, navigation }) => {
     return (
         <View style={styles.container}>
             <View style={styles.head}>
-            <TouchableOpacity onPress={() => navigation.goBack('Chapter')}>
-                     <Feather name="arrow-left" size={40} color="white" />
-                    </TouchableOpacity>
+            <View style={{display: 'flex', gap: 20, alignItems: 'center', flexDirection: 'row'}}>
+            <TouchableOpacity onPress={goBack}>
+              <Feather name="arrow-left" size={40} color="white" />
+            </TouchableOpacity>
             <Text style={styles.headText}>{chapter.name}</Text>
+            </View>
+
+            <View style={{display: 'flex', gap: 20, alignItems: 'center', flexDirection: 'row'}}>
+            <TouchableOpacity onPress={shareVerse}>
+            <Entypo name="share" size={30} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={speak}>
+                { isSpeaking ? <MaterialIcons name="volume-off" size={35} color="white" /> : <Foundation name="volume" size={35} color="white" /> }
+            </TouchableOpacity>
+            </View>
             </View>
             <FlatList
                 data={verses}
@@ -57,7 +106,7 @@ const styles = StyleSheet.create({
         paddingTop: 40,
         display: 'flex',
         flexDirection: 'row',
-        gap: 15,
+        gap: 110,
         paddingLeft: 20,
         alignItems: 'center',
         paddingBottom: 10,

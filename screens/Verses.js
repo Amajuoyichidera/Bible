@@ -1,17 +1,27 @@
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
-import React, { useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import Feather from '@expo/vector-icons/Feather';
 import Entypo from '@expo/vector-icons/Entypo';
 import { Share } from 'react-native';
 import * as Speech from 'expo-speech';
 import Foundation from '@expo/vector-icons/Foundation';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { bookMark } from '../bibleSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 
 const Verses = ({ route, navigation }) => {
     const { chapter } = route.params;
     const verses = chapter ? chapter.verses : [];
+    const [show, setShow] = useState(false);
+    const bookMarked = useSelector(state => state.bible.bookMarked);
 
+    const isBookmarked = bookMarked.find(
+        bookmark => bookmark.name === chapter.name
+    );
+    
     const shareVerse = async () => {
         try {
             const myVerse = verses.map(verse => `${verse.name} - ${verse.text}`).join('\n \n');
@@ -52,6 +62,22 @@ const Verses = ({ route, navigation }) => {
         </View>
     );
 
+    const dispatch = useDispatch();
+
+    const handleBookmark = () => {
+        const bookmarkData = {
+            name: chapter.name,
+            verses: verses,
+        };
+        dispatch(bookMark(bookmarkData));
+        setShow(prev => !prev)
+    }
+
+    useEffect(() => {
+        setTimeout(() => setShow(false), 1000)
+    })
+    
+
     return (
         <View style={styles.container}>
             <View style={styles.head}>
@@ -69,8 +95,19 @@ const Verses = ({ route, navigation }) => {
             <TouchableOpacity onPress={speak}>
                 { isSpeaking ? <MaterialIcons name="volume-off" size={35} color="white" /> : <Foundation name="volume" size={35} color="white" /> }
             </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleBookmark(chapter)}>
+               {isBookmarked ? (
+                 <MaterialCommunityIcons name="bookmark-off" size={30} color="white" />
+                   ) : (
+                <Ionicons name="bookmark" size={30} color="white" />
+                 )}
+            </TouchableOpacity>
             </View>
             </View>
+
+            {show && (
+                <Text style={{backgroundColor: 'white', padding: 10, fontWeight: 'bold', fontSize: 20}}>{isBookmarked ? 'Favorite Added' : 'Favorite Removed'}</Text>
+            )}
             <FlatList
                 data={verses}
                 keyExtractor={(item, index) => index.toString()}
@@ -82,16 +119,10 @@ const Verses = ({ route, navigation }) => {
 
 const styles = StyleSheet.create({
     itemCon: {
-        // display: 'flex',
-        // flexDirection: 'row',
-        // justifyContent: 'space-between',
-        // alignItems: 'center',
         backgroundColor: '#1C1C1E',
-        // height: 90,
         marginLeft: 10,
         marginRight: 10,
         padding: 20,
-        // borderRadius: 10,
     },
     text: {
         color: '#FBFBFF',
@@ -106,7 +137,7 @@ const styles = StyleSheet.create({
         paddingTop: 40,
         display: 'flex',
         flexDirection: 'row',
-        gap: 110,
+        gap: 70,
         paddingLeft: 20,
         alignItems: 'center',
         paddingBottom: 10,

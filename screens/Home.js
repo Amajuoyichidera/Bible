@@ -45,6 +45,11 @@ const Home = ({ navigation }) => {
         </TouchableOpacity>
     );
 
+    const favorite = () => {
+       navigation.navigate('Bookmark');
+       setSideBarVisible(false);
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.head}>
@@ -83,7 +88,7 @@ const Home = ({ navigation }) => {
                             <Text style={styles.dirText}>Home</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.dir}>
+                        <TouchableOpacity onPress={favorite} style={styles.dir}>
                             <FontAwesome name="bookmark" size={30} color="white" />
                             <Text style={styles.dirText}>Favorites</Text>
                         </TouchableOpacity>

@@ -16,14 +16,33 @@ const bibleSlice = createSlice({
     name: 'bible',
     initialState: {
         myBible: myBible,
-        selectedBible: null
+        selectedBible: null,
+        bookMarked: [],
     },
     reducers: {
         selectBible: (state, action) => {
             state.selectedBible = action.payload;
+        },
+        bookMark: (state, action) => {
+            const { name, chapter, verses } = action.payload;
+            const existingBookmarkIndex = state.bookMarked.findIndex(
+              bookmark => bookmark.name === name && bookmark.chapter === chapter
+            );
+        
+            if (existingBookmarkIndex !== -1) {
+                // Remove the existing bookmark
+                state.bookMarked = state.bookMarked.filter(
+                    bookmark => bookmark.name !== name || bookmark.chapter !== chapter
+                );
+            } else {
+                // Add new bookmark
+                state.bookMarked.push({ name, chapter, verses });
+            }
         }
+        
+        
     }
 })
 
-export const { selectBible } = bibleSlice.actions
+export const { selectBible, bookMark } = bibleSlice.actions
 export default bibleSlice.reducer;

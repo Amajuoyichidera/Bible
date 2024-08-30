@@ -4,7 +4,7 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
 const Initial = ({ navigation }) => {
     useEffect(() => {
-        const timer = setTimeout(() => {
+        setTimeout(() => {
             navigation.navigate('Home')
         }, 2000)
     }, [])
